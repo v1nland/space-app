@@ -1,0 +1,28 @@
+# GraphQL schema example
+#
+# https://gqlgen.com/getting-started/
+
+type Astronaut { 
+  id: ID!
+  name: String!
+  isPilot: Boolean!
+}
+
+type Mission {
+  id: ID!
+  name: String!
+  crew: [Astronaut]!
+}
+
+type Query {
+  getAstronautById(id: ID!): Astronaut
+}
+
+type Mutation {
+  createAstronaut(input: NewAstronaut!): Astronaut!
+}
+
+input NewAstronaut {
+  name: String!
+  isPilot: Boolean!
+}
