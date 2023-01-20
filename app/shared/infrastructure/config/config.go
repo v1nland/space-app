@@ -57,7 +57,7 @@ func AllSettings() map[string]interface{} {
 func getConfig() error {
 	viper.SetConfigName("config.yaml")
 	viper.SetConfigType("yaml")
-	viper.AddConfigPath(".")
+	viper.AddConfigPath("./app/shared/infrastructure/config")
 
 	err := viper.ReadInConfig()
 	if err != nil {

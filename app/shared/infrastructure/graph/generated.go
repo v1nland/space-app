@@ -8,12 +8,12 @@ import (
 	"embed"
 	"errors"
 	"fmt"
+	"space-playground/app/shared/infrastructure/graph/model"
 	"strconv"
 	"sync"
 
 	"github.com/99designs/gqlgen/graphql"
 	"github.com/99designs/gqlgen/graphql/introspection"
-	"space-playground/app/shared/infrastructure/graph/model"
 	gqlparser "github.com/vektah/gqlparser/v2"
 	"github.com/vektah/gqlparser/v2/ast"
 )
@@ -66,7 +66,7 @@ type ComplexityRoot struct {
 }
 
 type MutationResolver interface {
-	CreateAstronaut(ctx context.Context, input model.NewAstronaut) (*model.Astronaut, error)
+	CreateAstronaut(ctx context.Context, input model.NewAstronaut) (*string, error)
 }
 type QueryResolver interface {
 	GetAstronautByID(ctx context.Context, id string) (*model.Astronaut, error)
@@ -247,7 +247,7 @@ func (ec *executionContext) field_Mutation_createAstronaut_args(ctx context.Cont
 	var arg0 model.NewAstronaut
 	if tmp, ok := rawArgs["input"]; ok {
 		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
-		arg0, err = ec.unmarshalNNewAstronaut2githubᚗcomᚋv1nlandᚋspaceᚑappᚋappᚋgraphᚋmodelᚐNewAstronaut(ctx, tmp)
+		arg0, err = ec.unmarshalNNewAstronaut2spaceᚑplaygroundᚋappᚋsharedᚋinfrastructureᚋgraphᚋmodelᚐNewAstronaut(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
@@ -572,7 +572,7 @@ func (ec *executionContext) _Mission_crew(ctx context.Context, field graphql.Col
 	}
 	res := resTmp.([]*model.Astronaut)
 	fc.Result = res
-	return ec.marshalNAstronaut2ᚕᚖgithubᚗcomᚋv1nlandᚋspaceᚑappᚋappᚋgraphᚋmodelᚐAstronaut(ctx, field.Selections, res)
+	return ec.marshalNAstronaut2ᚕᚖspaceᚑplaygroundᚋappᚋsharedᚋinfrastructureᚋgraphᚋmodelᚐAstronaut(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Mission_crew(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -617,14 +617,11 @@ func (ec *executionContext) _Mutation_createAstronaut(ctx context.Context, field
 		return graphql.Null
 	}
 	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
 		return graphql.Null
 	}
-	res := resTmp.(*model.Astronaut)
+	res := resTmp.(*string)
 	fc.Result = res
-	return ec.marshalNAstronaut2ᚖgithubᚗcomᚋv1nlandᚋspaceᚑappᚋappᚋgraphᚋmodelᚐAstronaut(ctx, field.Selections, res)
+	return ec.marshalOID2ᚖstring(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Mutation_createAstronaut(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -634,15 +631,7 @@ func (ec *executionContext) fieldContext_Mutation_createAstronaut(ctx context.Co
 		IsMethod:   true,
 		IsResolver: true,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			switch field.Name {
-			case "id":
-				return ec.fieldContext_Astronaut_id(ctx, field)
-			case "name":
-				return ec.fieldContext_Astronaut_name(ctx, field)
-			case "isPilot":
-				return ec.fieldContext_Astronaut_isPilot(ctx, field)
-			}
-			return nil, fmt.Errorf("no field named %q was found under type Astronaut", field.Name)
+			return nil, errors.New("field of type ID does not have child fields")
 		},
 	}
 	defer func() {
@@ -684,7 +673,7 @@ func (ec *executionContext) _Query_getAstronautById(ctx context.Context, field g
 	}
 	res := resTmp.(*model.Astronaut)
 	fc.Result = res
-	return ec.marshalOAstronaut2ᚖgithubᚗcomᚋv1nlandᚋspaceᚑappᚋappᚋgraphᚋmodelᚐAstronaut(ctx, field.Selections, res)
+	return ec.marshalOAstronaut2ᚖspaceᚑplaygroundᚋappᚋsharedᚋinfrastructureᚋgraphᚋmodelᚐAstronaut(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Query_getAstronautById(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -2774,9 +2763,6 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 				return ec._Mutation_createAstronaut(ctx, field)
 			})
 
-			if out.Values[i] == graphql.Null {
-				invalids++
-			}
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -3168,11 +3154,7 @@ func (ec *executionContext) ___Type(ctx context.Context, sel ast.SelectionSet, o
 
 // region    ***************************** type.gotpl *****************************
 
-func (ec *executionContext) marshalNAstronaut2githubᚗcomᚋv1nlandᚋspaceᚑappᚋappᚋgraphᚋmodelᚐAstronaut(ctx context.Context, sel ast.SelectionSet, v model.Astronaut) graphql.Marshaler {
-	return ec._Astronaut(ctx, sel, &v)
-}
-
-func (ec *executionContext) marshalNAstronaut2ᚕᚖgithubᚗcomᚋv1nlandᚋspaceᚑappᚋappᚋgraphᚋmodelᚐAstronaut(ctx context.Context, sel ast.SelectionSet, v []*model.Astronaut) graphql.Marshaler {
+func (ec *executionContext) marshalNAstronaut2ᚕᚖspaceᚑplaygroundᚋappᚋsharedᚋinfrastructureᚋgraphᚋmodelᚐAstronaut(ctx context.Context, sel ast.SelectionSet, v []*model.Astronaut) graphql.Marshaler {
 	ret := make(graphql.Array, len(v))
 	var wg sync.WaitGroup
 	isLen1 := len(v) == 1
@@ -3196,7 +3178,7 @@ func (ec *executionContext) marshalNAstronaut2ᚕᚖgithubᚗcomᚋv1nlandᚋspa
 			if !isLen1 {
 				defer wg.Done()
 			}
-			ret[i] = ec.marshalOAstronaut2ᚖgithubᚗcomᚋv1nlandᚋspaceᚑappᚋappᚋgraphᚋmodelᚐAstronaut(ctx, sel, v[i])
+			ret[i] = ec.marshalOAstronaut2ᚖspaceᚑplaygroundᚋappᚋsharedᚋinfrastructureᚋgraphᚋmodelᚐAstronaut(ctx, sel, v[i])
 		}
 		if isLen1 {
 			f(i)
@@ -3208,16 +3190,6 @@ func (ec *executionContext) marshalNAstronaut2ᚕᚖgithubᚗcomᚋv1nlandᚋspa
 	wg.Wait()
 
 	return ret
-}
-
-func (ec *executionContext) marshalNAstronaut2ᚖgithubᚗcomᚋv1nlandᚋspaceᚑappᚋappᚋgraphᚋmodelᚐAstronaut(ctx context.Context, sel ast.SelectionSet, v *model.Astronaut) graphql.Marshaler {
-	if v == nil {
-		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
-			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
-		}
-		return graphql.Null
-	}
-	return ec._Astronaut(ctx, sel, v)
 }
 
 func (ec *executionContext) unmarshalNBoolean2bool(ctx context.Context, v interface{}) (bool, error) {
@@ -3250,7 +3222,7 @@ func (ec *executionContext) marshalNID2string(ctx context.Context, sel ast.Selec
 	return res
 }
 
-func (ec *executionContext) unmarshalNNewAstronaut2githubᚗcomᚋv1nlandᚋspaceᚑappᚋappᚋgraphᚋmodelᚐNewAstronaut(ctx context.Context, v interface{}) (model.NewAstronaut, error) {
+func (ec *executionContext) unmarshalNNewAstronaut2spaceᚑplaygroundᚋappᚋsharedᚋinfrastructureᚋgraphᚋmodelᚐNewAstronaut(ctx context.Context, v interface{}) (model.NewAstronaut, error) {
 	res, err := ec.unmarshalInputNewAstronaut(ctx, v)
 	return res, graphql.ErrorOnPath(ctx, err)
 }
@@ -3523,7 +3495,7 @@ func (ec *executionContext) marshalN__TypeKind2string(ctx context.Context, sel a
 	return res
 }
 
-func (ec *executionContext) marshalOAstronaut2ᚖgithubᚗcomᚋv1nlandᚋspaceᚑappᚋappᚋgraphᚋmodelᚐAstronaut(ctx context.Context, sel ast.SelectionSet, v *model.Astronaut) graphql.Marshaler {
+func (ec *executionContext) marshalOAstronaut2ᚖspaceᚑplaygroundᚋappᚋsharedᚋinfrastructureᚋgraphᚋmodelᚐAstronaut(ctx context.Context, sel ast.SelectionSet, v *model.Astronaut) graphql.Marshaler {
 	if v == nil {
 		return graphql.Null
 	}
@@ -3553,6 +3525,22 @@ func (ec *executionContext) marshalOBoolean2ᚖbool(ctx context.Context, sel ast
 		return graphql.Null
 	}
 	res := graphql.MarshalBoolean(*v)
+	return res
+}
+
+func (ec *executionContext) unmarshalOID2ᚖstring(ctx context.Context, v interface{}) (*string, error) {
+	if v == nil {
+		return nil, nil
+	}
+	res, err := graphql.UnmarshalID(v)
+	return &res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) marshalOID2ᚖstring(ctx context.Context, sel ast.SelectionSet, v *string) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	res := graphql.MarshalID(*v)
 	return res
 }
 

@@ -1,7 +1,11 @@
 package domain
 
-import "github.com/google/uuid"
+import (
+	"context"
+
+	"github.com/google/uuid"
+)
 
 type CreateAstronautRepository interface {
-	Insert(astronaut *Astronaut) (id *uuid.UUID, err error)
+	Create(ctx context.Context, astronaut *Astronaut) (id *uuid.UUID, err error)
 }

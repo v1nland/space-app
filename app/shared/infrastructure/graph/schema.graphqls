@@ -19,7 +19,7 @@ type Query {
 }
 
 type Mutation {
-  createAstronaut(input: NewAstronaut!): Astronaut!
+  createAstronaut(input: NewAstronaut!): ID
 }
 
 input NewAstronaut {

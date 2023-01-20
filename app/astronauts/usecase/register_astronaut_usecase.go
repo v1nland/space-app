@@ -1,6 +1,7 @@
 package usecase
 
 import (
+	"context"
 	"space-playground/app/astronauts/domain"
 
 	"github.com/google/uuid"
@@ -22,13 +23,13 @@ func NewRegisterAstronautUsecase(createAstronautRepository domain.CreateAstronau
 /*
  *	Repository functions
  */
-func (r *registerAstronautUsecase) Insert(name string, isPilot bool) (*uuid.UUID, error) {
+func (r *registerAstronautUsecase) Register(ctx context.Context, name string, isPilot bool) (*uuid.UUID, error) {
 	astronaut := domain.Astronaut{
 		Name:    name,
 		IsPilot: isPilot,
 	}
 
-	id, err := r.createAstronautRepository.Insert(&astronaut)
+	id, err := r.createAstronautRepository.Create(ctx, &astronaut)
 	if err != nil {
 		return nil, err
 	}

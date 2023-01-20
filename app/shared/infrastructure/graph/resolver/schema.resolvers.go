@@ -7,14 +7,19 @@ package resolver
 import (
 	"context"
 	"fmt"
-
 	"space-playground/app/shared/infrastructure/graph"
 	"space-playground/app/shared/infrastructure/graph/model"
 )
 
 // CreateAstronaut is the resolver for the createAstronaut field.
-func (r *mutationResolver) CreateAstronaut(ctx context.Context, input model.NewAstronaut) (*model.Astronaut, error) {
-	panic(fmt.Errorf("not implemented: CreateAstronaut - createAstronaut"))
+func (r *mutationResolver) CreateAstronaut(ctx context.Context, input model.NewAstronaut) (string, error) {
+	id, err := r.registerAstronautUseCase.Register(ctx, input.Name, input.IsPilot)
+
+	if err != nil {
+		return "", err
+	}
+
+	return id.String(), nil
 }
 
 // GetAstronautByID is the resolver for the getAstronautById field.

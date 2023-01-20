@@ -1,6 +1,7 @@
 package infrastructure
 
 import (
+	"context"
 	"space-playground/app/astronauts/domain"
 	"space-playground/app/shared/infrastructure/psql/connection"
 	"space-playground/app/shared/infrastructure/psql/db_model"
@@ -24,14 +25,13 @@ func NewCreateAstronautRepository(connection connection.PostgreSqlConnection) *c
 /*
  *	Repository functions
  */
-func (c *createAstronautRepository) Insert(astronaut *domain.Astronaut) (id *uuid.UUID, err error) {
+func (c *createAstronautRepository) Create(ctx context.Context, astronaut *domain.Astronaut) (id *uuid.UUID, err error) {
 	db, err := c.connection.GetConnection()
 	if err != nil {
 		return nil, err
 	}
 
 	db_astronaut := db_model.Astronaut{
-		ID:      [16]byte{},
 		Name:    astronaut.Name,
 		IsPilot: astronaut.IsPilot,
 	}
