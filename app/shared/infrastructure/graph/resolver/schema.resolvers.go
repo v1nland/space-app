@@ -6,9 +6,11 @@ package resolver
 
 import (
 	"context"
-	"fmt"
 	"space-playground/app/shared/infrastructure/graph"
 	"space-playground/app/shared/infrastructure/graph/model"
+	"space-playground/app/shared/infrastructure/log"
+
+	"github.com/google/uuid"
 )
 
 // CreateAstronaut is the resolver for the createAstronaut field.
@@ -16,6 +18,7 @@ func (r *mutationResolver) CreateAstronaut(ctx context.Context, input model.NewA
 	id, err := r.registerAstronautUseCase.Register(ctx, input.Name, input.IsPilot)
 
 	if err != nil {
+		log.WithError(err).Error("error at mutation[createAstronaut]")
 		return "", err
 	}
 
@@ -24,7 +27,18 @@ func (r *mutationResolver) CreateAstronaut(ctx context.Context, input model.NewA
 
 // GetAstronautByID is the resolver for the getAstronautById field.
 func (r *queryResolver) GetAstronautByID(ctx context.Context, id string) (*model.Astronaut, error) {
-	panic(fmt.Errorf("not implemented: GetAstronautByID - getAstronautById"))
+	astronaut, err := r.retrieveAstronautsUsecase.ById(ctx, uuid.MustParse(id))
+
+	if err != nil {
+		log.WithError(err).Error("error at query[getAstronautById]")
+		return nil, err
+	}
+
+	return &model.Astronaut{
+		ID:      astronaut.ID.String(),
+		Name:    astronaut.Name,
+		IsPilot: astronaut.IsPilot,
+	}, nil
 }
 
 // Mutation returns graph.MutationResolver implementation.

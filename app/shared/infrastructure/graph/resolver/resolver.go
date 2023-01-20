@@ -7,11 +7,16 @@ import "space-playground/app/astronauts/domain"
 // It serves as dependency injection for your app, add any dependencies you require here.
 
 type Resolver struct {
-	registerAstronautUseCase domain.RegisterAstronautUseCase
+	registerAstronautUseCase  domain.RegisterAstronautUseCase
+	retrieveAstronautsUsecase domain.RetrieveAstronautsUseCase
 }
 
-func NewResolver(registerAstronautUseCase domain.RegisterAstronautUseCase) *Resolver {
+func NewResolver(
+	registerAstronautUseCase domain.RegisterAstronautUseCase,
+	retrieveAstronautsUsecase domain.RetrieveAstronautsUseCase,
+) *Resolver {
 	return &Resolver{
-		registerAstronautUseCase: registerAstronautUseCase,
+		registerAstronautUseCase:  registerAstronautUseCase,
+		retrieveAstronautsUsecase: retrieveAstronautsUsecase,
 	}
 }

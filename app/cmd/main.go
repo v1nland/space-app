@@ -29,12 +29,14 @@ func main() {
 
 	// create repositories
 	createAstronautRepository := infrastructure.NewCreateAstronautRepository(psqlConnection)
+	getAstronautsRepository := infrastructure.NewGetAstronautsRepository(psqlConnection)
 
 	// create usecases
 	registerAstronautUseCase := usecase.NewRegisterAstronautUsecase(createAstronautRepository)
+	retrieveAstronautsUseCase := usecase.NewRetrieveAstronautsUsecase(getAstronautsRepository)
 
 	// create graphql resolver
-	resolver := resolver.NewResolver(registerAstronautUseCase)
+	resolver := resolver.NewResolver(registerAstronautUseCase, retrieveAstronautsUseCase)
 
 	// create graphql server
 	server := handler.NewDefaultServer(
