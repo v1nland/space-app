@@ -2,8 +2,10 @@ package main
 
 import (
 	"net/http"
-	"space-playground/app/astronauts/infrastructure"
-	"space-playground/app/astronauts/usecase"
+	astronautsInfrastructure "space-playground/app/astronauts/infrastructure"
+	astronautsUsecase "space-playground/app/astronauts/usecase"
+	missionsInfrastructure "space-playground/app/missions/infrastructure"
+	missionsUsecase "space-playground/app/missions/usecase"
 	"space-playground/app/shared/infrastructure/config"
 	"space-playground/app/shared/infrastructure/graph"
 	"space-playground/app/shared/infrastructure/graph/resolver"
@@ -15,28 +17,34 @@ import (
 )
 
 func init() {
-	config.LoadSettings("SmartSide", "Monumental")
+	config.LoadSettings()
 }
 
 func main() {
 	// create logger
 	log.Init()
-	log.Info("%s is starting", config.GetString("app"))
+	log.Info("%s is starting", config.Values.App.Name)
 
 	// create psql connection
-	psqlConnection := psql.CreatePostgreSqlDbConnection()
+	psqlConnection := psql.CreateDbConnection()
 	psql.AutoMigrateEntities(psqlConnection)
 
 	// create repositories
-	createAstronautRepository := infrastructure.NewCreateAstronautRepository(psqlConnection)
-	getAstronautsRepository := infrastructure.NewGetAstronautsRepository(psqlConnection)
+	createAstronautRepository := astronautsInfrastructure.NewCreateAstronautRepository(psqlConnection)
+	getAstronautsRepository := astronautsInfrastructure.NewGetAstronautsRepository(psqlConnection)
+	createMissionRepository := missionsInfrastructure.NewCreateAstronautRepository(psqlConnection)
 
 	// create usecases
-	registerAstronautUseCase := usecase.NewRegisterAstronautUsecase(createAstronautRepository)
-	retrieveAstronautsUseCase := usecase.NewRetrieveAstronautsUsecase(getAstronautsRepository)
+	registerAstronautUseCase := astronautsUsecase.NewRegisterAstronautUsecase(createAstronautRepository)
+	listAstronautsUseCase := astronautsUsecase.NewAstronautDetailsUsecase(getAstronautsRepository)
+	registerMissionUseCase := missionsUsecase.NewRegisterMissionUsecase(createMissionRepository)
 
 	// create graphql resolver
-	resolver := resolver.NewResolver(registerAstronautUseCase, retrieveAstronautsUseCase)
+	resolver := resolver.NewResolver(
+		registerAstronautUseCase,
+		listAstronautsUseCase,
+		registerMissionUseCase,
+	)
 
 	// create graphql server
 	server := handler.NewDefaultServer(

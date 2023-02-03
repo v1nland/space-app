@@ -3,10 +3,10 @@ package connection
 import "space-playground/app/shared/infrastructure/log"
 
 type Migrate struct {
-	connection PostgreSqlConnection
+	connection Connection
 }
 
-func NewMigrate(connection PostgreSqlConnection) *Migrate {
+func NewMigrate(connection Connection) *Migrate {
 	return &Migrate{connection: connection}
 }
 

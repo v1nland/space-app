@@ -6,6 +6,8 @@ package resolver
 
 import (
 	"context"
+	"fmt"
+	"space-playground/app/missions/domain"
 	"space-playground/app/shared/infrastructure/graph"
 	"space-playground/app/shared/infrastructure/graph/model"
 	"space-playground/app/shared/infrastructure/log"
@@ -14,7 +16,7 @@ import (
 )
 
 // CreateAstronaut is the resolver for the createAstronaut field.
-func (r *mutationResolver) CreateAstronaut(ctx context.Context, input model.NewAstronaut) (string, error) {
+func (r *mutationResolver) CreateAstronaut(ctx context.Context, input model.NewAstronautInput) (string, error) {
 	id, err := r.registerAstronautUseCase.Register(ctx, input.Name, input.IsPilot)
 
 	if err != nil {
@@ -25,9 +27,31 @@ func (r *mutationResolver) CreateAstronaut(ctx context.Context, input model.NewA
 	return id.String(), nil
 }
 
+// CreateMission is the resolver for the createMission field.
+func (r *mutationResolver) CreateMission(ctx context.Context, input model.NewMissionInput) (int, error) {
+	registerMissionUseCaseInput := domain.RegisterMissionUseCaseInput{}
+	registerMissionUseCaseInput.FromGql(input)
+
+	id, err := r.registerMissionUseCase.Register(ctx, registerMissionUseCaseInput)
+
+	if err != nil {
+		log.WithError(err).Error("error at mutation[createMission]")
+		return 0, err
+	}
+
+	return *id, nil
+}
+
 // GetAstronautByID is the resolver for the getAstronautById field.
 func (r *queryResolver) GetAstronautByID(ctx context.Context, id string) (*model.Astronaut, error) {
-	astronaut, err := r.retrieveAstronautsUsecase.ById(ctx, uuid.MustParse(id))
+	astronautUuid, err := uuid.Parse(id)
+
+	if err != nil {
+		log.WithError(err).Error("error parsing [id] argument")
+		return nil, err
+	}
+
+	astronaut, err := r.astronautDetailsUsecase.ById(ctx, astronautUuid)
 
 	if err != nil {
 		log.WithError(err).Error("error at query[getAstronautById]")
@@ -39,6 +63,11 @@ func (r *queryResolver) GetAstronautByID(ctx context.Context, id string) (*model
 		Name:    astronaut.Name,
 		IsPilot: astronaut.IsPilot,
 	}, nil
+}
+
+// GetMissionByID is the resolver for the getMissionById field.
+func (r *queryResolver) GetMissionByID(ctx context.Context, id int) (*model.Mission, error) {
+	panic(fmt.Errorf("not implemented: GetMissionByID - getMissionById"))
 }
 
 // Mutation returns graph.MutationResolver implementation.

@@ -13,10 +13,10 @@ import (
  *	Repository struct and constructor
  */
 type getAstronautsRepository struct {
-	connection connection.PostgreSqlConnection
+	connection connection.Connection
 }
 
-func NewGetAstronautsRepository(connection connection.PostgreSqlConnection) *getAstronautsRepository {
+func NewGetAstronautsRepository(connection connection.Connection) *getAstronautsRepository {
 	return &getAstronautsRepository{
 		connection: connection,
 	}

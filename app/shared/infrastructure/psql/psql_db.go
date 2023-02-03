@@ -9,7 +9,7 @@ import (
 	"space-playground/app/shared/infrastructure/psql/connection"
 )
 
-func AutoMigrateEntities(conn connection.PostgreSqlConnection) {
+func AutoMigrateEntities(conn connection.Connection) {
 	log.Info("autoMigrateEntities...")
 
 	migrate := connection.NewMigrate(conn)
@@ -21,19 +21,21 @@ func AutoMigrateEntities(conn connection.PostgreSqlConnection) {
 	log.Info("autoMigrateEntities... OK")
 }
 
-func CreatePostgreSqlDbConnection() *connection.PostgreSqlDbConnection {
-	host := config.GetString("config.postgresql.host")
-	port := config.GetInt("config.postgresql.port")
-	database := config.GetString("config.postgresql.database")
-	user := config.GetString("config.postgresql.user")
-	password := config.GetString("config.postgresql.password")
+func CreateDbConnection() *connection.DbConnection {
+	host := config.Values.Postgres.Host
+	port := config.Values.Postgres.Port
+	database := config.Values.Postgres.Database
+	user := config.Values.Postgres.User
+	password := config.Values.Postgres.Password
 
-	connection := connection.NewPostgreSqlConnection(connection.Config().
-		Host(host).
-		Port(port).
-		DatabaseName(database).
-		User(user).
-		Password(password),
+	connection := connection.NewConnection(
+		connection.Config().
+			Host(host).
+			Port(port).
+			DatabaseName(database).
+			User(user).
+			Password(password),
 	)
+
 	return connection
 }

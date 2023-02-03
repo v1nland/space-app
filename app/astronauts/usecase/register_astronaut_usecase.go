@@ -21,7 +21,7 @@ func NewRegisterAstronautUsecase(createAstronautRepository domain.CreateAstronau
 }
 
 /*
- *	Repository functions
+ *	Usecase functions
  */
 func (r *registerAstronautUsecase) Register(ctx context.Context, name string, isPilot bool) (*uuid.UUID, error) {
 	astronaut := domain.Astronaut{

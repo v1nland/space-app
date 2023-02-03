@@ -1,25 +1,70 @@
 package config
 
 import (
-	"errors"
-	"fmt"
 	"time"
 
 	"github.com/spf13/viper"
 )
 
-const DURATION = time.Second * 5
+var (
+	// Config is the global configuration object
+	Values *Config
+)
 
-func LoadSettings(squadName string, appName string) {
-	if err := getConfig(); err != nil {
-		panic("no config found")
+type (
+	// Config -.
+	Config struct {
+		App      `yaml:"app"`
+		Jwt      `yaml:"jwt"`
+		Log      `yaml:"logger"`
+		Postgres `yaml:"postgres"`
 	}
 
-	if len(appName) == 0 {
-		panic("no app to run")
+	// App -.
+	App struct {
+		Name    string `yaml:"name"`
+		Version string `yaml:"version"`
+		Prefix  string `yaml:"prefix"`
+		Release bool   `yaml:"release"`
 	}
 
-	viper.Set("app", appName)
+	// JWT -.
+	Jwt struct {
+		Issuer   string `yaml:"issuer"`
+		Key      string `yaml:"key"`
+		Duration int    `yaml:"duration"`
+	}
+
+	// Log -.
+	Log struct {
+		Level string `yaml:"level"`
+	}
+
+	// POSTGRES -.
+	Postgres struct {
+		Database string `yaml:"database"`
+		Host     string `yaml:"host"`
+		Port     int    `yaml:"port"`
+		User     string `yaml:"user"`
+		Password string `yaml:"password"`
+		Ssl      bool   `yaml:"ssl"`
+	}
+)
+
+func LoadSettings() {
+	viper.SetConfigName("config.yaml")
+	viper.SetConfigType("yaml")
+	viper.AddConfigPath("./app/shared/infrastructure/config")
+
+	// Find and read the config file
+	if err := viper.ReadInConfig(); err != nil {
+		panic(err)
+	}
+
+	// Unmarshal config into struct
+	if err := viper.Unmarshal(&Values); err != nil {
+		panic(err)
+	}
 }
 
 func Get(key string) interface{} {
@@ -52,17 +97,4 @@ func GetBool(key string) bool {
 
 func AllSettings() map[string]interface{} {
 	return viper.AllSettings()
-}
-
-func getConfig() error {
-	viper.SetConfigName("config.yaml")
-	viper.SetConfigType("yaml")
-	viper.AddConfigPath("./app/shared/infrastructure/config")
-
-	err := viper.ReadInConfig()
-	if err != nil {
-		return errors.New(fmt.Sprintf("fatal error config file: %s \n", err))
-	}
-
-	return nil
 }

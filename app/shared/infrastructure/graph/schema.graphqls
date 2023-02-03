@@ -3,26 +3,34 @@
 # https://gqlgen.com/getting-started/
 
 type Astronaut { 
-  id: ID!
+  id: String!
   name: String!
   isPilot: Boolean!
 }
 
 type Mission {
-  id: ID!
+  id: String!
   name: String!
   crew: [Astronaut]!
 }
 
 type Query {
-  getAstronautById(id: ID!): Astronaut
+  getAstronautById(id: String!): Astronaut
+  getMissionById(id: Int!): Mission
 }
 
 type Mutation {
-  createAstronaut(input: NewAstronaut!): ID!
+  createAstronaut(input: NewAstronautInput!): String!
+  createMission(input: NewMissionInput!): Int!
 }
 
-input NewAstronaut {
+input NewAstronautInput {
   name: String!
   isPilot: Boolean!
+}
+
+input NewMissionInput {
+  title: String!
+  description: String!
+  crewMembersId: [String!]!
 }

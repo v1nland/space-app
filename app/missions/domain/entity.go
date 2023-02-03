@@ -3,7 +3,7 @@ package domain
 import "space-playground/app/astronauts/domain"
 
 type Mission struct {
-	ID          int64
+	ID          int
 	Title       string
 	Description string
 	Crew        []domain.Astronaut

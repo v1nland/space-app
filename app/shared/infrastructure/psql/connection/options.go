@@ -68,20 +68,20 @@ func MergeOptions(opts ...*PostgreSqlOptions) *PostgreSqlOptions {
 }
 
 var (
-	postgresqlDefaultPort = 5432
+	defaultPort = 5432
 )
 
 func (d *PostgreSqlOptions) GetUrlConnection() string {
-	UrlPostgreSqlFormat := "postgresql://%v:%v@%v:%v/%v"
+	urlFormat := "postgresql://%v:%v@%v:%v/%v"
 
 	if d.port == nil {
-		d.port = &postgresqlDefaultPort
+		d.port = &defaultPort
 	}
 
-	if config.GetBool("config.postgresql.ssl_mode") == false {
-		UrlPostgreSqlFormat = "postgresql://%v:%v@%v:%v/%v?sslmode=disable"
+	if config.Values.Postgres.Ssl == false {
+		urlFormat = "postgresql://%v:%v@%v:%v/%v?sslmode=disable"
 	}
 
-	log.Info("connection: %s", fmt.Sprintf(UrlPostgreSqlFormat, *d.user, "************", *d.host, *d.port, *d.databaseName))
-	return fmt.Sprintf(UrlPostgreSqlFormat, *d.user, *d.password, *d.host, *d.port, *d.databaseName)
+	log.Info("connection: %s", fmt.Sprintf(urlFormat, *d.user, "************", *d.host, *d.port, *d.databaseName))
+	return fmt.Sprintf(urlFormat, *d.user, *d.password, *d.host, *d.port, *d.databaseName)
 }

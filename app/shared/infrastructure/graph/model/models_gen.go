@@ -14,7 +14,13 @@ type Mission struct {
 	Crew []*Astronaut `json:"crew"`
 }
 
-type NewAstronaut struct {
+type NewAstronautInput struct {
 	Name    string `json:"name"`
 	IsPilot bool   `json:"isPilot"`
+}
+
+type NewMissionInput struct {
+	Title         string   `json:"title"`
+	Description   string   `json:"description"`
+	CrewMembersID []string `json:"crewMembersId"`
 }

@@ -39,7 +39,7 @@ func getLogLevel(logLevel string) zapcore.Level {
 
 func Init() {
 	log := initLoggerZap()
-	log.Info(fmt.Sprintf("Logger loaded successfully with level: %s", config.GetString("config.log.level")))
+	log.Info(fmt.Sprintf("logger loaded successfully with level: %s", config.Values.Log.Level))
 	instance = &Logger{log: log}
 }
 
@@ -47,7 +47,7 @@ func initLoggerZap() *zap.Logger {
 	cfg := zap.Config{
 		Encoding:         "json",
 		DisableCaller:    true,
-		Level:            zap.NewAtomicLevelAt(getLogLevel(config.GetString("config.log.level"))),
+		Level:            zap.NewAtomicLevelAt(getLogLevel(config.Values.Log.Level)),
 		OutputPaths:      []string{"stdout"},
 		ErrorOutputPaths: []string{"stdout"},
 		EncoderConfig: zapcore.EncoderConfig{

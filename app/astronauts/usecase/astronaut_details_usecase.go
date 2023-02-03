@@ -10,20 +10,20 @@ import (
 /*
  *	Usecase struct and constructor
  */
-type retrieveAstronautsUsecase struct {
+type astronautDetailsUsecase struct {
 	getAstronautsRepository domain.GetAstronautsRepository
 }
 
-func NewRetrieveAstronautsUsecase(getAstronautsRepository domain.GetAstronautsRepository) *retrieveAstronautsUsecase {
-	return &retrieveAstronautsUsecase{
+func NewAstronautDetailsUsecase(getAstronautsRepository domain.GetAstronautsRepository) *astronautDetailsUsecase {
+	return &astronautDetailsUsecase{
 		getAstronautsRepository: getAstronautsRepository,
 	}
 }
 
 /*
- *	Repository functions
+ *	Usecase functions
  */
-func (r *retrieveAstronautsUsecase) ById(ctx context.Context, id uuid.UUID) (*domain.Astronaut, error) {
+func (r *astronautDetailsUsecase) ById(ctx context.Context, id uuid.UUID) (*domain.Astronaut, error) {
 	astronaut, err := r.getAstronautsRepository.ById(ctx, id)
 	if err != nil {
 		return nil, err

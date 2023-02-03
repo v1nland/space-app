@@ -1,22 +1,28 @@
 package resolver
 
-import "space-playground/app/astronauts/domain"
+import (
+	astronautsDomain "space-playground/app/astronauts/domain"
+	missionsDomain "space-playground/app/missions/domain"
+)
 
 // This file will not be regenerated automatically.
 //
 // It serves as dependency injection for your app, add any dependencies you require here.
 
 type Resolver struct {
-	registerAstronautUseCase  domain.RegisterAstronautUseCase
-	retrieveAstronautsUsecase domain.RetrieveAstronautsUseCase
+	registerAstronautUseCase astronautsDomain.RegisterAstronautUseCase
+	astronautDetailsUsecase  astronautsDomain.ListAstronautsUseCase
+	registerMissionUseCase   missionsDomain.RegisterMissionUseCase
 }
 
 func NewResolver(
-	registerAstronautUseCase domain.RegisterAstronautUseCase,
-	retrieveAstronautsUsecase domain.RetrieveAstronautsUseCase,
+	registerAstronautUseCase astronautsDomain.RegisterAstronautUseCase,
+	astronautDetailsUsecase astronautsDomain.ListAstronautsUseCase,
+	registerMissionUseCase missionsDomain.RegisterMissionUseCase,
 ) *Resolver {
 	return &Resolver{
-		registerAstronautUseCase:  registerAstronautUseCase,
-		retrieveAstronautsUsecase: retrieveAstronautsUsecase,
+		registerAstronautUseCase: registerAstronautUseCase,
+		astronautDetailsUsecase:  astronautDetailsUsecase,
+		registerMissionUseCase:   registerMissionUseCase,
 	}
 }

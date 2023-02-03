@@ -15,17 +15,17 @@ const LogMode = 1
 
 var connection *gorm.DB
 
-type PostgreSqlConnection interface {
+type Connection interface {
 	GetConnection() (*gorm.DB, error)
 	CloseConnection()
 }
 
-type PostgreSqlDbConnection struct {
+type DbConnection struct {
 	opts *PostgreSqlOptions
 	url  string
 }
 
-func NewPostgreSqlConnection(opts ...*PostgreSqlOptions) *PostgreSqlDbConnection {
+func NewConnection(opts ...*PostgreSqlOptions) *DbConnection {
 	databaseOptions := MergeOptions(opts...)
 	url := databaseOptions.GetUrlConnection()
 
@@ -33,13 +33,13 @@ func NewPostgreSqlConnection(opts ...*PostgreSqlOptions) *PostgreSqlDbConnection
 		log.Fatal(errors.New("error creating connection, empty url").Error())
 	}
 
-	return &PostgreSqlDbConnection{
+	return &DbConnection{
 		opts: databaseOptions,
 		url:  url,
 	}
 }
 
-func (r *PostgreSqlDbConnection) GetConnection() (*gorm.DB, error) {
+func (r *DbConnection) GetConnection() (*gorm.DB, error) {
 	var err error
 
 	if connection == nil || !isAlive() {
@@ -47,10 +47,10 @@ func (r *PostgreSqlDbConnection) GetConnection() (*gorm.DB, error) {
 
 		if connection, err = gorm.Open(postgres.Open(r.url), &gorm.Config{
 			NamingStrategy: schema.NamingStrategy{
-				TablePrefix: config.GetString("config.gorm.prefix"), // table name prefix, table for `User` would be `t_users`
+				TablePrefix: config.Values.App.Prefix, // table name prefix, table for `User` would be `t_users`
 			},
 		}); err != nil {
-			log.WithError(err).Error("error trying to connect to DB")
+			log.WithError(err).Error("error trying to connect to db")
 			return nil, err
 		} else {
 			log.Info("connected to database")
@@ -61,7 +61,7 @@ func (r *PostgreSqlDbConnection) GetConnection() (*gorm.DB, error) {
 	return connection, nil
 }
 
-func (r *PostgreSqlDbConnection) CloseConnection() {
+func (r *DbConnection) CloseConnection() {
 
 	if sqlDb, err := connection.DB(); err != nil {
 		if err = sqlDb.Close(); err != nil {
@@ -79,5 +79,6 @@ func isAlive() bool {
 			return false
 		}
 	}
+
 	return true
 }

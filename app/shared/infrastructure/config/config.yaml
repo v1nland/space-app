@@ -1,10 +1,21 @@
-config:
-  gorm:
-    prefix: space_
-  postgresql:
-    host: localhost
-    port: 5432
-    database: postgres
-    user: postgres
-    password: 123
-    ssl_mode: disable
+app:
+  name: 'space-playground'
+  version: '1.0.0'
+  prefix: 'space_'
+  release: true
+
+jwt:
+  issuer: 'myIssuer'
+  key: 'myKey'
+  duration: 60
+
+log:
+  level: 'DEBUG'
+
+postgres:
+  database: 'postgres'
+  host: 'localhost'
+  port: 5432
+  user: 'postgres'
+  password: '123'
+  ssl: false
