@@ -9,8 +9,9 @@ type Astronaut {
 }
 
 type Mission {
-  id: String!
-  name: String!
+  id: Int!
+  title: String!
+  description: String!
   crew: [Astronaut]!
 }
 

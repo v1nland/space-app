@@ -6,7 +6,6 @@ package resolver
 
 import (
 	"context"
-	"fmt"
 	"space-playground/app/missions/domain"
 	"space-playground/app/shared/infrastructure/graph"
 	"space-playground/app/shared/infrastructure/graph/model"
@@ -67,7 +66,29 @@ func (r *queryResolver) GetAstronautByID(ctx context.Context, id string) (*model
 
 // GetMissionByID is the resolver for the getMissionById field.
 func (r *queryResolver) GetMissionByID(ctx context.Context, id int) (*model.Mission, error) {
-	panic(fmt.Errorf("not implemented: GetMissionByID - getMissionById"))
+	mission, err := r.missionDetailsUseCase.ById(ctx, id)
+
+	if err != nil {
+		log.WithError(err).Error("error at query[getAstronautById]")
+		return nil, err
+	}
+
+	response := &model.Mission{
+		ID:          mission.ID,
+		Title:       mission.Title,
+		Description: mission.Description,
+		Crew:        []*model.Astronaut{},
+	}
+
+	for _, crewMember := range mission.Crew {
+		response.Crew = append(response.Crew, &model.Astronaut{
+			ID:      crewMember.ID.String(),
+			Name:    crewMember.Name,
+			IsPilot: crewMember.IsPilot,
+		})
+	}
+
+	return response, nil
 }
 
 // Mutation returns graph.MutationResolver implementation.

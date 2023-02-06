@@ -33,17 +33,20 @@ func main() {
 	createAstronautRepository := astronautsInfrastructure.NewCreateAstronautRepository(psqlConnection)
 	getAstronautsRepository := astronautsInfrastructure.NewGetAstronautsRepository(psqlConnection)
 	createMissionRepository := missionsInfrastructure.NewCreateAstronautRepository(psqlConnection)
+	getMissionsRepository := missionsInfrastructure.NewGetMissionsRepository(psqlConnection)
 
 	// create usecases
 	registerAstronautUseCase := astronautsUsecase.NewRegisterAstronautUsecase(createAstronautRepository)
 	listAstronautsUseCase := astronautsUsecase.NewAstronautDetailsUsecase(getAstronautsRepository)
 	registerMissionUseCase := missionsUsecase.NewRegisterMissionUsecase(createMissionRepository)
+	listMissionsUseCase := missionsUsecase.NewMissionDetailsUsecase(getMissionsRepository)
 
 	// create graphql resolver
 	resolver := resolver.NewResolver(
 		registerAstronautUseCase,
 		listAstronautsUseCase,
 		registerMissionUseCase,
+		listMissionsUseCase,
 	)
 
 	// create graphql server
@@ -59,5 +62,6 @@ func main() {
 	http.Handle("/", playground.Handler("Playground", "/graphql"))
 	http.Handle("/graphql", server)
 
-	http.ListenAndServe(":8080", nil)
+	log.Info("[%s] is ready to handle messages and listen in port: 8080", config.Values.App.Name)
+	log.Fatal(http.ListenAndServe(":8080", nil).Error())
 }

@@ -9,9 +9,10 @@ type Astronaut struct {
 }
 
 type Mission struct {
-	ID   string       `json:"id"`
-	Name string       `json:"name"`
-	Crew []*Astronaut `json:"crew"`
+	ID          int          `json:"id"`
+	Title       string       `json:"title"`
+	Description string       `json:"description"`
+	Crew        []*Astronaut `json:"crew"`
 }
 
 type NewAstronautInput struct {

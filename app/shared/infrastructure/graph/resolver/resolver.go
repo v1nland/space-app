@@ -13,16 +13,19 @@ type Resolver struct {
 	registerAstronautUseCase astronautsDomain.RegisterAstronautUseCase
 	astronautDetailsUsecase  astronautsDomain.ListAstronautsUseCase
 	registerMissionUseCase   missionsDomain.RegisterMissionUseCase
+	missionDetailsUseCase    missionsDomain.ListMissionsUseCase
 }
 
 func NewResolver(
 	registerAstronautUseCase astronautsDomain.RegisterAstronautUseCase,
 	astronautDetailsUsecase astronautsDomain.ListAstronautsUseCase,
 	registerMissionUseCase missionsDomain.RegisterMissionUseCase,
+	missionDetailsUseCase missionsDomain.ListMissionsUseCase,
 ) *Resolver {
 	return &Resolver{
 		registerAstronautUseCase: registerAstronautUseCase,
 		astronautDetailsUsecase:  astronautDetailsUsecase,
 		registerMissionUseCase:   registerMissionUseCase,
+		missionDetailsUseCase:    missionDetailsUseCase,
 	}
 }

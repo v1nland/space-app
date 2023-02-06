@@ -51,9 +51,10 @@ type ComplexityRoot struct {
 	}
 
 	Mission struct {
-		Crew func(childComplexity int) int
-		ID   func(childComplexity int) int
-		Name func(childComplexity int) int
+		Crew        func(childComplexity int) int
+		Description func(childComplexity int) int
+		ID          func(childComplexity int) int
+		Title       func(childComplexity int) int
 	}
 
 	Mutation struct {
@@ -119,6 +120,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Mission.Crew(childComplexity), true
 
+	case "Mission.description":
+		if e.complexity.Mission.Description == nil {
+			break
+		}
+
+		return e.complexity.Mission.Description(childComplexity), true
+
 	case "Mission.id":
 		if e.complexity.Mission.ID == nil {
 			break
@@ -126,12 +134,12 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Mission.ID(childComplexity), true
 
-	case "Mission.name":
-		if e.complexity.Mission.Name == nil {
+	case "Mission.title":
+		if e.complexity.Mission.Title == nil {
 			break
 		}
 
-		return e.complexity.Mission.Name(childComplexity), true
+		return e.complexity.Mission.Title(childComplexity), true
 
 	case "Mutation.createAstronaut":
 		if e.complexity.Mutation.CreateAstronaut == nil {
@@ -541,9 +549,9 @@ func (ec *executionContext) _Mission_id(ctx context.Context, field graphql.Colle
 		}
 		return graphql.Null
 	}
-	res := resTmp.(string)
+	res := resTmp.(int)
 	fc.Result = res
-	return ec.marshalNString2string(ctx, field.Selections, res)
+	return ec.marshalNInt2int(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Mission_id(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -553,14 +561,14 @@ func (ec *executionContext) fieldContext_Mission_id(ctx context.Context, field g
 		IsMethod:   false,
 		IsResolver: false,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type String does not have child fields")
+			return nil, errors.New("field of type Int does not have child fields")
 		},
 	}
 	return fc, nil
 }
 
-func (ec *executionContext) _Mission_name(ctx context.Context, field graphql.CollectedField, obj *model.Mission) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Mission_name(ctx, field)
+func (ec *executionContext) _Mission_title(ctx context.Context, field graphql.CollectedField, obj *model.Mission) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Mission_title(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -573,7 +581,7 @@ func (ec *executionContext) _Mission_name(ctx context.Context, field graphql.Col
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return obj.Name, nil
+		return obj.Title, nil
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -590,7 +598,51 @@ func (ec *executionContext) _Mission_name(ctx context.Context, field graphql.Col
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_Mission_name(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Mission_title(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Mission",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Mission_description(ctx context.Context, field graphql.CollectedField, obj *model.Mission) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Mission_description(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Description, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Mission_description(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Mission",
 		Field:      field,
@@ -863,8 +915,10 @@ func (ec *executionContext) fieldContext_Query_getMissionById(ctx context.Contex
 			switch field.Name {
 			case "id":
 				return ec.fieldContext_Mission_id(ctx, field)
-			case "name":
-				return ec.fieldContext_Mission_name(ctx, field)
+			case "title":
+				return ec.fieldContext_Mission_title(ctx, field)
+			case "description":
+				return ec.fieldContext_Mission_description(ctx, field)
 			case "crew":
 				return ec.fieldContext_Mission_crew(ctx, field)
 			}
@@ -2934,9 +2988,16 @@ func (ec *executionContext) _Mission(ctx context.Context, sel ast.SelectionSet, 
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
-		case "name":
+		case "title":
 
-			out.Values[i] = ec._Mission_name(ctx, field, obj)
+			out.Values[i] = ec._Mission_title(ctx, field, obj)
+
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "description":
+
+			out.Values[i] = ec._Mission_description(ctx, field, obj)
 
 			if out.Values[i] == graphql.Null {
 				invalids++

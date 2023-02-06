@@ -15,11 +15,8 @@ type RegisterMissionUseCaseInput struct {
 }
 
 func (input *RegisterMissionUseCaseInput) FromGql(payload model.NewMissionInput) {
-	input = &RegisterMissionUseCaseInput{
-		Title:       payload.Title,
-		Description: payload.Description,
-		Crew:        []domain.Astronaut{},
-	}
+	input.Title = payload.Title
+	input.Description = payload.Description
 
 	for _, crewMemberId := range payload.CrewMembersID {
 		input.Crew = append(input.Crew, domain.Astronaut{
@@ -30,4 +27,8 @@ func (input *RegisterMissionUseCaseInput) FromGql(payload model.NewMissionInput)
 
 type RegisterMissionUseCase interface {
 	Register(ctx context.Context, input RegisterMissionUseCaseInput) (*int, error)
+}
+
+type ListMissionsUseCase interface {
+	ById(ctx context.Context, id int) (*Mission, error)
 }
