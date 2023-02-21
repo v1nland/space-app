@@ -32,3 +32,7 @@ type RegisterMissionUseCase interface {
 type ListMissionsUseCase interface {
 	ById(ctx context.Context, id int) (*Mission, error)
 }
+
+type ListAllMissionsUseCase interface {
+	All(ctx context.Context) ([]Mission, error)
+}

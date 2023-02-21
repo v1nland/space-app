@@ -15,6 +15,7 @@ type Resolver struct {
 	listAllAstronautsUseCase astronautsDomain.ListAllAstronautsUseCase
 	registerMissionUseCase   missionsDomain.RegisterMissionUseCase
 	missionDetailsUseCase    missionsDomain.ListMissionsUseCase
+	listAllMissionsUseCase   missionsDomain.ListAllMissionsUseCase
 }
 
 func NewResolver(
@@ -23,6 +24,7 @@ func NewResolver(
 	listAllAstronautsUseCase astronautsDomain.ListAllAstronautsUseCase,
 	registerMissionUseCase missionsDomain.RegisterMissionUseCase,
 	missionDetailsUseCase missionsDomain.ListMissionsUseCase,
+	listAllMissionsUseCase missionsDomain.ListAllMissionsUseCase,
 ) *Resolver {
 	return &Resolver{
 		registerAstronautUseCase: registerAstronautUseCase,
@@ -30,5 +32,6 @@ func NewResolver(
 		listAllAstronautsUseCase: listAllAstronautsUseCase,
 		registerMissionUseCase:   registerMissionUseCase,
 		missionDetailsUseCase:    missionDetailsUseCase,
+		listAllMissionsUseCase:   listAllMissionsUseCase,
 	}
 }

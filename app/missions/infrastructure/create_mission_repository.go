@@ -4,7 +4,6 @@ import (
 	"context"
 	"space-playground/app/missions/domain"
 	"space-playground/app/shared/infrastructure/psql/connection"
-	"space-playground/app/shared/infrastructure/psql/db_model"
 )
 
 /*
@@ -23,27 +22,19 @@ func NewCreateAstronautRepository(connection connection.Connection) *createMissi
 /*
  *	Repository functions
  */
-func (c *createMissionRepository) Create(ctx context.Context, mission *domain.Mission) (id *int, err error) {
+func (c *createMissionRepository) Create(ctx context.Context, mission *domain.Mission) (*int, error) {
+	// get connection
 	db, err := c.connection.GetConnection()
 	if err != nil {
 		return nil, err
 	}
 
-	db_mission := db_model.Mission{
-		Title:       mission.Title,
-		Description: mission.Description,
-		Crew:        []db_model.Astronaut{},
-	}
-
-	for _, crewMember := range mission.Crew {
-		db_mission.Crew = append(db_mission.Crew, db_model.Astronaut{
-			ID: crewMember.ID,
-		})
-	}
-
+	// convert to db model
+	db_mission := mission.ToDbModel()
 	if err := db.Create(&db_mission).Error; err != nil {
 		return nil, err
 	}
 
+	// return
 	return &db_mission.ID, nil
 }

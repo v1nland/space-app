@@ -65,6 +65,7 @@ type ComplexityRoot struct {
 
 	Query struct {
 		GetAllAstronauts func(childComplexity int) int
+		GetAllMissions   func(childComplexity int) int
 		GetAstronautByID func(childComplexity int, id string) int
 		GetMissionByID   func(childComplexity int, id int) int
 	}
@@ -78,6 +79,7 @@ type QueryResolver interface {
 	GetAstronautByID(ctx context.Context, id string) (*model.Astronaut, error)
 	GetMissionByID(ctx context.Context, id int) (*model.Mission, error)
 	GetAllAstronauts(ctx context.Context) ([]*model.Astronaut, error)
+	GetAllMissions(ctx context.Context) ([]*model.Mission, error)
 }
 
 type executableSchema struct {
@@ -174,6 +176,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Query.GetAllAstronauts(childComplexity), true
+
+	case "Query.getAllMissions":
+		if e.complexity.Query.GetAllMissions == nil {
+			break
+		}
+
+		return e.complexity.Query.GetAllMissions(childComplexity), true
 
 	case "Query.getAstronautById":
 		if e.complexity.Query.GetAstronautByID == nil {
@@ -990,6 +999,60 @@ func (ec *executionContext) fieldContext_Query_getAllAstronauts(ctx context.Cont
 				return ec.fieldContext_Astronaut_isPilot(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Astronaut", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Query_getAllMissions(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Query_getAllMissions(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Query().GetAllMissions(rctx)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.([]*model.Mission)
+	fc.Result = res
+	return ec.marshalNMission2ᚕᚖspaceᚑplaygroundᚋappᚋsharedᚋinfrastructureᚋgraphᚋmodelᚐMission(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Query_getAllMissions(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Query",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_Mission_id(ctx, field)
+			case "title":
+				return ec.fieldContext_Mission_title(ctx, field)
+			case "description":
+				return ec.fieldContext_Mission_description(ctx, field)
+			case "crew":
+				return ec.fieldContext_Mission_crew(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type Mission", field.Name)
 		},
 	}
 	return fc, nil
@@ -3200,6 +3263,29 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 			out.Concurrently(i, func() graphql.Marshaler {
 				return rrm(innerCtx)
 			})
+		case "getAllMissions":
+			field := field
+
+			innerFunc := func(ctx context.Context) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_getAllMissions(ctx, field)
+				if res == graphql.Null {
+					atomic.AddUint32(&invalids, 1)
+				}
+				return res
+			}
+
+			rrm := func(ctx context.Context) graphql.Marshaler {
+				return ec.OperationContext.RootResolverMiddleware(ctx, innerFunc)
+			}
+
+			out.Concurrently(i, func() graphql.Marshaler {
+				return rrm(innerCtx)
+			})
 		case "__type":
 
 			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
@@ -3607,6 +3693,44 @@ func (ec *executionContext) marshalNInt2int(ctx context.Context, sel ast.Selecti
 		}
 	}
 	return res
+}
+
+func (ec *executionContext) marshalNMission2ᚕᚖspaceᚑplaygroundᚋappᚋsharedᚋinfrastructureᚋgraphᚋmodelᚐMission(ctx context.Context, sel ast.SelectionSet, v []*model.Mission) graphql.Marshaler {
+	ret := make(graphql.Array, len(v))
+	var wg sync.WaitGroup
+	isLen1 := len(v) == 1
+	if !isLen1 {
+		wg.Add(len(v))
+	}
+	for i := range v {
+		i := i
+		fc := &graphql.FieldContext{
+			Index:  &i,
+			Result: &v[i],
+		}
+		ctx := graphql.WithFieldContext(ctx, fc)
+		f := func(i int) {
+			defer func() {
+				if r := recover(); r != nil {
+					ec.Error(ctx, ec.Recover(ctx, r))
+					ret = nil
+				}
+			}()
+			if !isLen1 {
+				defer wg.Done()
+			}
+			ret[i] = ec.marshalOMission2ᚖspaceᚑplaygroundᚋappᚋsharedᚋinfrastructureᚋgraphᚋmodelᚐMission(ctx, sel, v[i])
+		}
+		if isLen1 {
+			f(i)
+		} else {
+			go f(i)
+		}
+
+	}
+	wg.Wait()
+
+	return ret
 }
 
 func (ec *executionContext) unmarshalNNewAstronautInput2spaceᚑplaygroundᚋappᚋsharedᚋinfrastructureᚋgraphᚋmodelᚐNewAstronautInput(ctx context.Context, v interface{}) (model.NewAstronautInput, error) {

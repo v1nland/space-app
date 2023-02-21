@@ -19,6 +19,7 @@ type Query {
   getAstronautById(id: String!): Astronaut
   getMissionById(id: Int!): Mission
   getAllAstronauts: [Astronaut]!
+  getAllMissions: [Mission]!
 }
 
 type Mutation {

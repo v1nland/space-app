@@ -2,7 +2,6 @@ package infrastructure
 
 import (
 	"context"
-	astronautsDomain "space-playground/app/astronauts/domain"
 	missionsDomain "space-playground/app/missions/domain"
 	"space-playground/app/shared/infrastructure/psql/connection"
 	"space-playground/app/shared/infrastructure/psql/db_model"
@@ -26,32 +25,50 @@ func NewGetMissionsRepository(connection connection.Connection) *getMissionsRepo
 /*
  *	Repository functions
  */
-func (c *getMissionsRepository) ById(ctx context.Context, id int) (mission *missionsDomain.Mission, err error) {
+func (c *getMissionsRepository) ById(ctx context.Context, id int) (*missionsDomain.Mission, error) {
+	// get connection
 	db, err := c.connection.GetConnection()
 	if err != nil {
 		return nil, err
 	}
 
+	// retrieve mission
 	db_mission := db_model.Mission{}
-
 	if err := db.Preload(clause.Associations).Where("id = ?", id).First(&db_mission).Error; err != nil {
 		return nil, err
 	}
 
-	mission = &missionsDomain.Mission{
-		ID:          db_mission.ID,
-		Title:       db_mission.Title,
-		Description: db_mission.Description,
-		Crew:        []astronautsDomain.Astronaut{},
+	// convert to domain model
+	mission := missionsDomain.Mission{}
+	mission.FromDbModel(db_mission)
+
+	// return
+	return &mission, nil
+}
+
+func (c *getMissionsRepository) All(ctx context.Context) ([]missionsDomain.Mission, error) {
+	// get connection
+	db, err := c.connection.GetConnection()
+	if err != nil {
+		return nil, err
 	}
 
-	for _, crewMember := range db_mission.Crew {
-		mission.Crew = append(mission.Crew, astronautsDomain.Astronaut{
-			ID:      crewMember.ID,
-			Name:    crewMember.Name,
-			IsPilot: crewMember.IsPilot,
-		})
+	// retrieve missions
+	db_missions := []db_model.Mission{}
+	if err := db.Preload(clause.Associations).Find(&db_missions).Error; err != nil {
+		return nil, err
 	}
 
-	return mission, nil
+	// convert to domain model
+	missions := []missionsDomain.Mission{}
+
+	for _, db_mission := range db_missions {
+		mission := missionsDomain.Mission{}
+		mission.FromDbModel(db_mission)
+
+		missions = append(missions, mission)
+	}
+
+	// return
+	return missions, nil
 }

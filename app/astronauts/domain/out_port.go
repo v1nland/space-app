@@ -7,7 +7,7 @@ import (
 )
 
 type CreateAstronautRepository interface {
-	Create(ctx context.Context, astronaut *Astronaut) (id *uuid.UUID, err error)
+	Create(ctx context.Context, astronaut *Astronaut) (*uuid.UUID, error)
 }
 
 type GetAstronautsRepository interface {

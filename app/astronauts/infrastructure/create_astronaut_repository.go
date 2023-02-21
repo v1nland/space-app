@@ -4,7 +4,6 @@ import (
 	"context"
 	"space-playground/app/astronauts/domain"
 	"space-playground/app/shared/infrastructure/psql/connection"
-	"space-playground/app/shared/infrastructure/psql/db_model"
 
 	"github.com/google/uuid"
 )
@@ -25,20 +24,19 @@ func NewCreateAstronautRepository(connection connection.Connection) *createAstro
 /*
  *	Repository functions
  */
-func (c *createAstronautRepository) Create(ctx context.Context, astronaut *domain.Astronaut) (id *uuid.UUID, err error) {
+func (c *createAstronautRepository) Create(ctx context.Context, astronaut *domain.Astronaut) (*uuid.UUID, error) {
+	// get connection
 	db, err := c.connection.GetConnection()
 	if err != nil {
 		return nil, err
 	}
 
-	db_astronaut := db_model.Astronaut{
-		Name:    astronaut.Name,
-		IsPilot: astronaut.IsPilot,
-	}
-
+	// convert to db model
+	db_astronaut := astronaut.ToDbModel()
 	if err := db.Create(&db_astronaut).Error; err != nil {
 		return nil, err
 	}
 
+	// return
 	return &db_astronaut.ID, nil
 }

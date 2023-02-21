@@ -114,6 +114,39 @@ func (r *queryResolver) GetAllAstronauts(ctx context.Context) ([]*model.Astronau
 	return response, nil
 }
 
+// GetAllMissions is the resolver for the getAllMissions field.
+func (r *queryResolver) GetAllMissions(ctx context.Context) ([]*model.Mission, error) {
+	missions, err := r.listAllMissionsUseCase.All(ctx)
+
+	if err != nil {
+		log.WithError(err).Error("error at query[getAllMissions]")
+		return nil, err
+	}
+
+	response := []*model.Mission{}
+
+	for _, mission := range missions {
+		m := &model.Mission{
+			ID:          mission.ID,
+			Title:       mission.Title,
+			Description: mission.Description,
+			Crew:        []*model.Astronaut{},
+		}
+
+		for _, crewMember := range mission.Crew {
+			m.Crew = append(m.Crew, &model.Astronaut{
+				ID:      crewMember.ID.String(),
+				Name:    crewMember.Name,
+				IsPilot: crewMember.IsPilot,
+			})
+		}
+
+		response = append(response, m)
+	}
+
+	return response, nil
+}
+
 // Mutation returns graph.MutationResolver implementation.
 func (r *Resolver) Mutation() graph.MutationResolver { return &mutationResolver{r} }
 
