@@ -37,16 +37,18 @@ func main() {
 
 	// create usecases
 	registerAstronautUseCase := astronautsUsecase.NewRegisterAstronautUsecase(createAstronautRepository)
-	listAstronautsUseCase := astronautsUsecase.NewAstronautDetailsUsecase(getAstronautsRepository)
+	astronautDetailsUseCase := astronautsUsecase.NewAstronautDetailsUsecase(getAstronautsRepository)
+	listAllAstronautsUseCase := astronautsUsecase.NewListAllAstronautsUsecase(getAstronautsRepository)
 	registerMissionUseCase := missionsUsecase.NewRegisterMissionUsecase(createMissionRepository)
-	listMissionsUseCase := missionsUsecase.NewMissionDetailsUsecase(getMissionsRepository)
+	missionDetailsUseCase := missionsUsecase.NewMissionDetailsUsecase(getMissionsRepository)
 
 	// create graphql resolver
 	resolver := resolver.NewResolver(
 		registerAstronautUseCase,
-		listAstronautsUseCase,
+		astronautDetailsUseCase,
+		listAllAstronautsUseCase,
 		registerMissionUseCase,
-		listMissionsUseCase,
+		missionDetailsUseCase,
 	)
 
 	// create graphql server

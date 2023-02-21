@@ -12,4 +12,5 @@ type CreateAstronautRepository interface {
 
 type GetAstronautsRepository interface {
 	ById(ctx context.Context, id uuid.UUID) (*Astronaut, error)
+	All(ctx context.Context) ([]Astronaut, error)
 }

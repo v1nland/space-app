@@ -11,6 +11,7 @@ import (
 	"space-playground/app/shared/infrastructure/graph/model"
 	"strconv"
 	"sync"
+	"sync/atomic"
 
 	"github.com/99designs/gqlgen/graphql"
 	"github.com/99designs/gqlgen/graphql/introspection"
@@ -63,6 +64,7 @@ type ComplexityRoot struct {
 	}
 
 	Query struct {
+		GetAllAstronauts func(childComplexity int) int
 		GetAstronautByID func(childComplexity int, id string) int
 		GetMissionByID   func(childComplexity int, id int) int
 	}
@@ -75,6 +77,7 @@ type MutationResolver interface {
 type QueryResolver interface {
 	GetAstronautByID(ctx context.Context, id string) (*model.Astronaut, error)
 	GetMissionByID(ctx context.Context, id int) (*model.Mission, error)
+	GetAllAstronauts(ctx context.Context) ([]*model.Astronaut, error)
 }
 
 type executableSchema struct {
@@ -164,6 +167,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Mutation.CreateMission(childComplexity, args["input"].(model.NewMissionInput)), true
+
+	case "Query.getAllAstronauts":
+		if e.complexity.Query.GetAllAstronauts == nil {
+			break
+		}
+
+		return e.complexity.Query.GetAllAstronauts(childComplexity), true
 
 	case "Query.getAstronautById":
 		if e.complexity.Query.GetAstronautByID == nil {
@@ -929,6 +939,58 @@ func (ec *executionContext) fieldContext_Query_getMissionById(ctx context.Contex
 	if fc.Args, err = ec.field_Query_getMissionById_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
 		ec.Error(ctx, err)
 		return
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Query_getAllAstronauts(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Query_getAllAstronauts(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Query().GetAllAstronauts(rctx)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.([]*model.Astronaut)
+	fc.Result = res
+	return ec.marshalNAstronaut2ᚕᚖspaceᚑplaygroundᚋappᚋsharedᚋinfrastructureᚋgraphᚋmodelᚐAstronaut(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Query_getAllAstronauts(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Query",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_Astronaut_id(ctx, field)
+			case "name":
+				return ec.fieldContext_Astronaut_name(ctx, field)
+			case "isPilot":
+				return ec.fieldContext_Astronaut_isPilot(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type Astronaut", field.Name)
+		},
 	}
 	return fc, nil
 }
@@ -3105,6 +3167,29 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 					}
 				}()
 				res = ec._Query_getMissionById(ctx, field)
+				return res
+			}
+
+			rrm := func(ctx context.Context) graphql.Marshaler {
+				return ec.OperationContext.RootResolverMiddleware(ctx, innerFunc)
+			}
+
+			out.Concurrently(i, func() graphql.Marshaler {
+				return rrm(innerCtx)
+			})
+		case "getAllAstronauts":
+			field := field
+
+			innerFunc := func(ctx context.Context) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_getAllAstronauts(ctx, field)
+				if res == graphql.Null {
+					atomic.AddUint32(&invalids, 1)
+				}
 				return res
 			}
 

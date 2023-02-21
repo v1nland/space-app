@@ -11,20 +11,23 @@ import (
 
 type Resolver struct {
 	registerAstronautUseCase astronautsDomain.RegisterAstronautUseCase
-	astronautDetailsUsecase  astronautsDomain.ListAstronautsUseCase
+	astronautDetailsUsecase  astronautsDomain.GetAstronautByIdUseCase
+	listAllAstronautsUseCase astronautsDomain.ListAllAstronautsUseCase
 	registerMissionUseCase   missionsDomain.RegisterMissionUseCase
 	missionDetailsUseCase    missionsDomain.ListMissionsUseCase
 }
 
 func NewResolver(
 	registerAstronautUseCase astronautsDomain.RegisterAstronautUseCase,
-	astronautDetailsUsecase astronautsDomain.ListAstronautsUseCase,
+	astronautDetailsUsecase astronautsDomain.GetAstronautByIdUseCase,
+	listAllAstronautsUseCase astronautsDomain.ListAllAstronautsUseCase,
 	registerMissionUseCase missionsDomain.RegisterMissionUseCase,
 	missionDetailsUseCase missionsDomain.ListMissionsUseCase,
 ) *Resolver {
 	return &Resolver{
 		registerAstronautUseCase: registerAstronautUseCase,
 		astronautDetailsUsecase:  astronautDetailsUsecase,
+		listAllAstronautsUseCase: listAllAstronautsUseCase,
 		registerMissionUseCase:   registerMissionUseCase,
 		missionDetailsUseCase:    missionDetailsUseCase,
 	}

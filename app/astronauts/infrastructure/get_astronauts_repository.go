@@ -45,3 +45,26 @@ func (c *getAstronautsRepository) ById(ctx context.Context, id uuid.UUID) (astro
 
 	return astronaut, nil
 }
+
+func (c *getAstronautsRepository) All(ctx context.Context) (astronauts []domain.Astronaut, err error) {
+	db, err := c.connection.GetConnection()
+	if err != nil {
+		return nil, err
+	}
+
+	db_astronauts := []db_model.Astronaut{}
+
+	if err := db.Find(&db_astronauts).Error; err != nil {
+		return nil, err
+	}
+
+	for _, db_astronaut := range db_astronauts {
+		astronauts = append(astronauts, domain.Astronaut{
+			ID:      db_astronaut.ID,
+			Name:    db_astronaut.Name,
+			IsPilot: db_astronaut.IsPilot,
+		})
+	}
+
+	return astronauts, nil
+}
