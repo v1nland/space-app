@@ -10,24 +10,25 @@ import (
 	"space-playground/app/shared/infrastructure/graph"
 	"space-playground/app/shared/infrastructure/graph/model"
 	"space-playground/app/shared/infrastructure/log"
+	"space-playground/app/shared/utils"
 
 	"github.com/google/uuid"
 )
 
 // CreateAstronaut is the resolver for the createAstronaut field.
-func (r *mutationResolver) CreateAstronaut(ctx context.Context, input model.NewAstronautInput) (string, error) {
+func (r *mutationResolver) CreateAstronaut(ctx context.Context, input model.NewAstronautInput) (*string, error) {
 	id, err := r.registerAstronautUseCase.Register(ctx, input.Name, input.IsPilot)
 
 	if err != nil {
 		log.WithError(err).Error("error at mutation[createAstronaut]")
-		return "", err
+		return nil, err
 	}
 
-	return id.String(), nil
+	return utils.CastUuidToStringPointer(id), nil
 }
 
 // CreateMission is the resolver for the createMission field.
-func (r *mutationResolver) CreateMission(ctx context.Context, input model.NewMissionInput) (int, error) {
+func (r *mutationResolver) CreateMission(ctx context.Context, input model.NewMissionInput) (*int, error) {
 	registerMissionUseCaseInput := domain.RegisterMissionUseCaseInput{}
 	registerMissionUseCaseInput.FromGql(input)
 
@@ -35,10 +36,10 @@ func (r *mutationResolver) CreateMission(ctx context.Context, input model.NewMis
 
 	if err != nil {
 		log.WithError(err).Error("error at mutation[createMission]")
-		return 0, err
+		return nil, err
 	}
 
-	return *id, nil
+	return id, nil
 }
 
 // GetAstronautByID is the resolver for the getAstronautById field.

@@ -21,8 +21,8 @@ type Query {
 }
 
 type Mutation {
-  createAstronaut(input: NewAstronautInput!): String!
-  createMission(input: NewMissionInput!): Int!
+  createAstronaut(input: NewAstronautInput!): String
+  createMission(input: NewMissionInput!): Int
 }
 
 input NewAstronautInput {

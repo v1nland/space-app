@@ -59,7 +59,7 @@ func main() {
 	)
 
 	// init server
-	http.Handle("/", playground.Handler("Playground", "/graphql"))
+	http.Handle("/", playground.Handler("space-playground", "/graphql"))
 	http.Handle("/graphql", server)
 
 	log.Info("[%s] is ready to handle messages and listen in port: 8080", config.Values.App.Name)

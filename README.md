@@ -24,7 +24,7 @@ Run application.
 go run app/cmd/main.go
 ```
 
-Then, you can open your browser and go to http://localhost:8080 to open the playground.
+Then, you can open your browser and go to <http://localhost:8080> to open the playground.
 
 ## Contributing
 
